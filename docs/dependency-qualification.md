@@ -6,11 +6,9 @@ Date: August 12, 2026
 
 ## Decision
 
-Use Culori as the focused color-science implementation dependency beginning
-with Batch 7.2. During Batch 7.1 it remains a development dependency used by
-permanent qualification tests because the public package does not yet expose
-color operations. Move it to `dependencies` only when shipped source imports
-it.
+Use Culori as the focused color-science implementation dependency. Batch 7.2
+now imports it from shipped color-foundation source, so it is a runtime package
+dependency while its separate declarations remain development-only.
 
 Color.js remains a high-quality reference implementation and comparison tool,
 not a package dependency.

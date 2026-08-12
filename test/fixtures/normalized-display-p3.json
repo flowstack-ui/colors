@@ -1,0 +1,62 @@
+{
+  "$schema": "flowstack.color-record.v1",
+  "source": {
+    "kind": "dtcg-token",
+    "value": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "display-p3",
+        "components": [
+          1,
+          0.5,
+          0
+        ],
+        "alpha": 1,
+        "hex": "#ff7600"
+      }
+    }
+  },
+  "color": {
+    "colorSpace": "display-p3",
+    "components": [
+      1,
+      0.5,
+      0
+    ],
+    "alpha": 1
+  },
+  "srgb": {
+    "color": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9999999999999994,
+        0.4904045332845655,
+        0
+      ],
+      "alpha": 1
+    },
+    "hex": "#ff7d00",
+    "mapped": true,
+    "deltaEOK": 0.03554002842098043,
+    "method": "css-color-4-oklch-local-minde"
+  },
+  "provenance": {
+    "$schema": "flowstack.color-provenance.v1",
+    "producer": {
+      "name": "@flowstack-ui/colors",
+      "version": "0.0.0"
+    },
+    "engine": {
+      "name": "culori",
+      "version": "4.0.2"
+    },
+    "operation": {
+      "name": "normalize",
+      "version": 1
+    },
+    "parameters": {
+      "gamutMapping": "css-color-4-oklch-local-minde",
+      "targetGamut": "srgb"
+    }
+  }
+}

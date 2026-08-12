@@ -1,27 +1,57 @@
-/** Experimental candidate boundary reserved during Colors Batch 7.1. */
-export const COLORS_CANDIDATE_SCHEMA = "flowstack.colors-candidate.v1" as const;
+export {
+  COLOR_ENGINE_NAME,
+  COLOR_ENGINE_VERSION,
+  COLORS_PACKAGE_VERSION,
+  GAMUT_MAPPING_JND,
+} from "./constants.js";
+export {
+  calculateColorDifference,
+  calculateContrast,
+  colorDifference,
+  contrastRatio,
+  convertColor,
+  mapColorToGamut,
+  normalizeColor,
+  parseColor,
+  validateColor,
+} from "./color.js";
+export { FlowstackColorError } from "./errors.js";
+export { createColorProvenance } from "./provenance.js";
+export {
+  COLOR_PROVENANCE_SCHEMA,
+  COLOR_RECORD_SCHEMA,
+  COLORS_CANDIDATE_SCHEMA,
+} from "./types.js";
+export type {
+  BrandSeedInput,
+  ColorComponents,
+  ColorConversionResult,
+  ColorDiagnostic,
+  ColorDiagnosticCode,
+  ColorDifferenceMethod,
+  ColorDifferenceReport,
+  ColorInput,
+  ColorProvenance,
+  ColorRecord,
+  ColorSource,
+  ColorsCandidateEnvelope,
+  ColorValidationResult,
+  ContrastReport,
+  DtcgColorComponent,
+  DtcgColorToken,
+  DtcgColorValue,
+  GamutMappingResult,
+  OutputGamut,
+  PaletteProfile,
+  SeedPreservationPolicy,
+  StructuredColor,
+  SupportedColorSpace,
+} from "./types.js";
 
-export type PaletteProfile = "interface" | "neutral" | "decorative";
-
-export type SeedPreservationPolicy =
-  | Readonly<{ mode: "exact" }>
-  | Readonly<{ mode: "bounded"; maxDeltaE: number }>;
-
-export interface BrandSeedInput {
-  readonly id: string;
-  readonly color: string;
-  readonly profile: PaletteProfile;
-  readonly preservation: SeedPreservationPolicy;
-}
-
-export interface ColorsCandidateEnvelope {
-  readonly $schema: typeof COLORS_CANDIDATE_SCHEMA;
-  readonly seeds: readonly BrandSeedInput[];
-}
+import type { ColorsCandidateEnvelope } from "./types.js";
 
 export function defineColorsCandidate<T extends ColorsCandidateEnvelope>(
   candidate: T,
 ): T {
   return candidate;
 }
-

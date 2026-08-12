@@ -8,7 +8,7 @@
     "skipLibCheck": false
   },
   "include": [
-    "dependency.ts"
+    "dependency.ts",
+    "../../dist/**/*.d.ts"
   ]
 }
-

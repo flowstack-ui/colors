@@ -6,7 +6,7 @@
   "layer": "colors",
   "kind": "guide",
   "purpose": "Generate and inspect deterministic color candidates without assigning component semantics or hiding changes to brand colors.",
-  "status": "foundation",
+  "status": "color-foundations",
   "rules": [
     {
       "id": "colors-candidate-not-theme",
@@ -32,10 +32,21 @@
       "id": "colors-no-runtime",
       "level": "must",
       "statement": "Keep Colors out of React and the application browser runtime; exchange serializable artifacts with Theme."
+    },
+    {
+      "id": "colors-gamut-honesty",
+      "level": "must",
+      "statement": "Keep conversion and gamut mapping separate and report the method and perceptual change whenever a color is mapped."
+    },
+    {
+      "id": "colors-alpha-context",
+      "level": "must",
+      "statement": "Do not claim contrast or perceptual difference for a translucent color without an explicit backdrop."
     }
   ],
   "related": [
     "docs/architecture.md",
+    "docs/color-foundations.md",
     "docs/dependency-qualification.md",
     "docs/testing.md"
   ]

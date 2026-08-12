@@ -1,6 +1,6 @@
 # Colors Architecture
 
-Status: **Batch 7.1 foundation**
+Status: **Batch 7.2 color foundations**
 
 Colors owns framework-independent color science and deterministic palette
 candidate generation. Theme owns semantic mapping, exact editable theme
@@ -34,3 +34,12 @@ because its CSS originated from a candidate.
 The `flowstack.colors-candidate.v1` boundary remains experimental until real
 generation evidence and Theme interchange finalize it in Batch 7.4.
 
+## Color record
+
+`flowstack.color-record.v1` is the stable Batch 7.2 evidence envelope. It
+preserves the exact source, a structured supported-space color, an sRGB
+fallback with explicit gamut diagnostics, and deterministic provenance.
+
+Conversions do not silently map gamut. Gamut mapping is a separate named
+operation. Contrast maps to exact sRGB and rejects alpha without a backdrop.
+See [`color-foundations.md`](color-foundations.md) for the API contract.

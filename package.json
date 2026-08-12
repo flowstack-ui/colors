@@ -44,6 +44,9 @@
   "engines": {
     "node": ">=22"
   },
+  "dependencies": {
+    "culori": "^4.0.2"
+  },
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "build": "npm run clean && tsc -p tsconfig.build.json",
@@ -58,7 +61,6 @@
   "devDependencies": {
     "@types/culori": "^4.0.1",
     "@types/node": "^22.19.7",
-    "culori": "^4.0.2",
     "typescript": "^5.9.3"
   }
 }

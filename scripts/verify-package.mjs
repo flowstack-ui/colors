@@ -41,6 +41,7 @@ try {
     "package/dist/index.d.ts",
     "package/dist/index.js",
     "package/docs/architecture.md",
+    "package/docs/color-foundations.md",
     "package/docs/dependency-qualification.md",
     "package/docs/testing.md",
     "package/package.json",
@@ -53,21 +54,57 @@ try {
   await writeFile(resolve(consumerDirectory, "package.json"), JSON.stringify({ name: "colors-clean-consumer", private: true, type: "module" }, null, 2));
   await writeFile(resolve(consumerDirectory, "index.mjs"), `
 import { COLORS_CANDIDATE_SCHEMA, defineColorsCandidate } from "@flowstack-ui/colors";
+import {
+  calculateContrast,
+  normalizeColor,
+} from "@flowstack-ui/colors";
 
 const candidate = defineColorsCandidate({
   $schema: COLORS_CANDIDATE_SCHEMA,
   seeds: [{ id: "primary", color: "#3157d5", profile: "interface", preservation: { mode: "exact" } }],
 });
 
-console.log(candidate.$schema, candidate.seeds[0].id);
+const color = normalizeColor("color(display-p3 1 0.5 0)");
+const contrast = calculateContrast("#000", "#fff");
+console.log(candidate.$schema, candidate.seeds[0].id, color.srgb.hex, contrast.ratio);
 `);
+  await writeFile(resolve(consumerDirectory, "index.ts"), `
+import {
+  calculateContrast,
+  convertColor,
+  normalizeColor,
+  type ColorRecord,
+  type StructuredColor,
+} from "@flowstack-ui/colors";
+
+const record: ColorRecord = normalizeColor("#3157d5");
+const converted: StructuredColor = convertColor(record.color, "oklch").color;
+const ratio: number = calculateContrast("#000", "#fff").ratio;
+void converted;
+void ratio;
+`);
+  await writeFile(resolve(consumerDirectory, "tsconfig.json"), JSON.stringify({
+    compilerOptions: {
+      module: "NodeNext",
+      moduleResolution: "NodeNext",
+      target: "ES2022",
+      strict: true,
+      noEmit: true,
+      skipLibCheck: false,
+    },
+    include: ["index.ts"],
+  }, null, 2));
 
   run("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", archive], consumerDirectory);
   const consumerOutput = run(process.execPath, ["index.mjs"], consumerDirectory).trim();
-  assert.equal(consumerOutput, "flowstack.colors-candidate.v1 primary");
+  assert.equal(consumerOutput, "flowstack.colors-candidate.v1 primary #ff7d00 21");
+  run(process.execPath, [resolve(repositoryRoot, "node_modules/typescript/bin/tsc"), "-p", "tsconfig.json"], consumerDirectory);
 
   const installedPackage = JSON.parse(await readFile(resolve(consumerDirectory, "node_modules/@flowstack-ui/colors/package.json"), "utf8"));
-  assert.equal(Object.keys(installedPackage.dependencies ?? {}).length, 0);
+  assert.deepEqual(installedPackage.dependencies, { culori: "^4.0.2" });
+  for (const prohibited of ["react", "@flowstack-ui/brick", "@flowstack-ui/theme"]) {
+    assert.equal(prohibited in installedPackage.dependencies, false);
+  }
   console.log(`Verified ${basename(archive)} and its clean consumer.`);
 } finally {
   await rm(temporaryRoot, { recursive: true, force: true });

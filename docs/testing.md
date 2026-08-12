@@ -9,15 +9,14 @@ alone.
 npm run check:repository
 ```
 
-The Batch 7.1 gate covers TypeScript, serializable boundary tests, deterministic
-fixtures, the qualified Culori behavior, package contents, and a clean packed
-consumer. See
+The repository gate covers TypeScript, serializable boundary tests, CSS and
+Design Tokens inputs, conversion without hidden mapping, difficult gamut
+cases, exact contrast vectors, alpha rejection, difference methods,
+provenance, deterministic fixtures, qualified Culori behavior, package
+contents, and a clean packed consumer. See
 [`dependency-qualification.md`](dependency-qualification.md) for the selection
 evidence and requalification triggers. Later batches add:
 
-- source-backed color conversion and gamut vectors;
-- difficult hue, black, white, gray, and gamut-boundary cases;
-- exact WCAG foreground/background measurements;
 - state direction and distinguishability;
 - independent light and dark generation;
 - multi-seed collision diagnostics;

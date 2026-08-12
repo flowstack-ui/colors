@@ -2,17 +2,19 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  COLOR_GENERATION_REQUEST_SCHEMA,
   COLORS_CANDIDATE_SCHEMA,
-  defineColorsCandidate,
+  defineColorGenerationRequest,
+  generatePaletteCandidate,
 } from "../dist/index.js";
 
-test("defines a serializable multi-seed candidate boundary", () => {
-  const candidate = defineColorsCandidate({
-    $schema: COLORS_CANDIDATE_SCHEMA,
+test("generates a serializable multi-seed candidate boundary", () => {
+  const request = defineColorGenerationRequest({
+    $schema: COLOR_GENERATION_REQUEST_SCHEMA,
     seeds: [
       {
         id: "primary",
-        color: "#3157d5",
+        color: "#0090ff",
         profile: "interface",
         preservation: { mode: "exact" },
       },
@@ -24,9 +26,9 @@ test("defines a serializable multi-seed candidate boundary", () => {
       },
     ],
   });
+  const candidate = generatePaletteCandidate(request);
 
-  assert.equal(candidate.$schema, "flowstack.colors-candidate.v1");
-  assert.equal(candidate.seeds.length, 2);
+  assert.equal(candidate.$schema, COLORS_CANDIDATE_SCHEMA);
+  assert.equal(candidate.families.length, 2);
   assert.deepEqual(JSON.parse(JSON.stringify(candidate)), candidate);
 });
-

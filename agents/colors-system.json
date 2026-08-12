@@ -6,7 +6,7 @@
   "layer": "colors",
   "kind": "guide",
   "purpose": "Generate and inspect deterministic color candidates without assigning component semantics or hiding changes to brand colors.",
-  "status": "color-foundations",
+  "status": "candidate-generation",
   "rules": [
     {
       "id": "colors-candidate-not-theme",
@@ -42,11 +42,22 @@
       "id": "colors-alpha-context",
       "level": "must",
       "statement": "Do not claim contrast or perceptual difference for a translucent color without an explicit backdrop."
+    },
+    {
+      "id": "colors-accepted-scope",
+      "level": "must",
+      "statement": "Treat accepted as passing only the candidate's declared Colors measurements; Theme mapping and rendered Brick qualification remain separate gates."
+    },
+    {
+      "id": "colors-named-reference",
+      "level": "must",
+      "statement": "Keep named FLOWSTACK palettes labeled raw-reference and do not infer interface semantics or accessibility from their step positions."
     }
   ],
   "related": [
     "docs/architecture.md",
     "docs/color-foundations.md",
+    "docs/palette-generation.md",
     "docs/dependency-qualification.md",
     "docs/testing.md"
   ]

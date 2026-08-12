@@ -3,16 +3,15 @@
 Deterministic, framework-independent color and palette candidate tooling for
 Flowstack UI.
 
-> The package is in its private `0.0.0` foundation stage. It is not published
-> and does not yet expose a palette generator.
+> The package is in its private `0.0.0` qualification stage. It is not
+> published, and generated candidates are not yet Theme- or Brick-qualified.
 
 ## Boundary
 
 Colors parses and converts colors, maps output gamut, calculates contrast and
-perceptual difference, and records deterministic provenance. Later batches use
-those foundations to generate explainable palette candidates. Colors does not
-know React components or assign semantic meanings such as `accent` or
-`warning`.
+perceptual difference, and generates deterministic, explainable palette
+candidates. Colors does not know React components or assign semantic meanings
+such as `accent` or `warning`.
 
 An approved workflow is:
 
@@ -25,16 +24,19 @@ brand seeds and intent
 ```
 
 Existing named palettes and explicit 12-step light/dark output remain part of
-the planned capability. Interface, neutral, and decorative profiles may expose
-different shapes appropriate to their purpose.
+the capability. Interface, neutral, and decorative profiles expose different
+shapes appropriate to their purpose.
 
 ## Current API
 
 ```ts
 import {
+  COLOR_GENERATION_REQUEST_SCHEMA,
   calculateColorDifference,
   calculateContrast,
   convertColor,
+  generatePaletteCandidate,
+  getNamedPalette,
   mapColorToGamut,
   normalizeColor,
   validateColor,
@@ -53,6 +55,23 @@ const validation = validateColor({
   colorSpace: "oklch",
   components: [0.7, 0.2, 45],
 });
+
+const candidate = generatePaletteCandidate({
+  $schema: COLOR_GENERATION_REQUEST_SCHEMA,
+  seeds: [
+    { id: "brand", color: "#3157d5", profile: "interface" },
+    { id: "neutral", color: "#64748b", profile: "neutral" },
+    {
+      id: "campaign",
+      color: "#ff00ff",
+      profile: "decorative",
+      options: { steps: 5, anchorStep: 3 },
+    },
+  ],
+});
+
+const flowstackBlue = getNamedPalette("blue");
+// A FLOWSTACK-generated 12-step raw reference, not a semantic theme.
 ```
 
 CSS color strings and structured Design Tokens color values are accepted.
@@ -64,8 +83,9 @@ color is valid for parsing, normalization, conversion, and gamut mapping, but
 comparison fails with `alpha-requires-backdrop` until a future API accepts an
 explicit backdrop.
 
-No current color record or future generated candidate should be represented as
-Theme- or Brick-qualified until Theme maps and validates its exact values.
+An accepted candidate means only that its declared Colors relationships pass.
+It is not a theme. Theme must map its exact values, revalidate the actual Brick
+pairs, and earn rendered qualification separately.
 
 ## Development
 
@@ -82,3 +102,5 @@ measured evidence are in
 [`docs/dependency-qualification.md`](docs/dependency-qualification.md).
 The complete current API and diagnostic contract is in
 [`docs/color-foundations.md`](docs/color-foundations.md).
+Palette generation, preservation, rejection, and named references are in
+[`docs/palette-generation.md`](docs/palette-generation.md).

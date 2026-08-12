@@ -1,5 +1,6 @@
 export const COLOR_RECORD_SCHEMA = "flowstack.color-record.v1" as const;
 export const COLOR_PROVENANCE_SCHEMA = "flowstack.color-provenance.v1" as const;
+export const COLOR_GENERATION_REQUEST_SCHEMA = "flowstack.colors-request.v1" as const;
 export const COLORS_CANDIDATE_SCHEMA = "flowstack.colors-candidate.v1" as const;
 
 export type SupportedColorSpace =
@@ -77,7 +78,8 @@ export interface ColorProvenance {
       | "convert"
       | "gamut-map"
       | "contrast"
-      | "difference";
+      | "difference"
+      | "generate";
     version: 1;
   }>;
   readonly parameters: Readonly<Record<string, string | number | boolean>>;
@@ -155,18 +157,268 @@ export interface ColorDifferenceReport {
 
 export type PaletteProfile = "interface" | "neutral" | "decorative";
 
+export type PaletteAppearance = "light" | "dark";
+
+export type TwelveStepScale = readonly [
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+];
+
+export type NamedPaletteName =
+  | "gray"
+  | "mauve"
+  | "slate"
+  | "sage"
+  | "olive"
+  | "sand"
+  | "tomato"
+  | "red"
+  | "ruby"
+  | "crimson"
+  | "pink"
+  | "plum"
+  | "purple"
+  | "violet"
+  | "iris"
+  | "indigo"
+  | "blue"
+  | "cyan"
+  | "teal"
+  | "jade"
+  | "green"
+  | "grass"
+  | "lime"
+  | "mint"
+  | "sky"
+  | "gold"
+  | "bronze"
+  | "brown"
+  | "yellow"
+  | "amber"
+  | "orange";
+
+export interface NamedPaletteReference {
+  readonly name: NamedPaletteName;
+  readonly seed: string;
+  readonly light: TwelveStepScale;
+  readonly dark: TwelveStepScale;
+  readonly qualification: "raw-reference";
+  readonly source: Readonly<{
+    name: "@flowstack-ui/colors";
+    algorithm: "flowstack-palette-v1";
+  }>;
+}
+
 export type SeedPreservationPolicy =
   | Readonly<{ mode: "exact" }>
   | Readonly<{ mode: "bounded"; maxDeltaE: number }>;
 
-export interface BrandSeedInput {
+export interface PaletteSeedBase {
   readonly id: string;
-  readonly color: string;
-  readonly profile: PaletteProfile;
-  readonly preservation: SeedPreservationPolicy;
+  readonly name?: string;
+  readonly intent?: string;
+  readonly color: ColorInput;
+  readonly preservation?: SeedPreservationPolicy;
 }
+
+export interface InterfaceSeedInput extends PaletteSeedBase {
+  readonly profile: "interface";
+  readonly options?: Readonly<{
+    appearances?: readonly PaletteAppearance[];
+    referenceBackgrounds?: Partial<Record<PaletteAppearance, ColorInput>>;
+  }>;
+}
+
+export interface NeutralSeedInput extends PaletteSeedBase {
+  readonly profile: "neutral";
+  readonly options?: Readonly<{
+    appearances?: readonly PaletteAppearance[];
+  }>;
+}
+
+export interface DecorativeSeedInput extends PaletteSeedBase {
+  readonly profile: "decorative";
+  readonly options?: Readonly<{
+    appearances?: readonly PaletteAppearance[];
+    steps?: number;
+    anchorStep?: number;
+  }>;
+}
+
+export type BrandSeedInput =
+  | InterfaceSeedInput
+  | NeutralSeedInput
+  | DecorativeSeedInput;
+
+export interface ColorGenerationRequest {
+  readonly $schema: typeof COLOR_GENERATION_REQUEST_SCHEMA;
+  readonly seeds: readonly BrandSeedInput[];
+  readonly constraints?: Readonly<{
+    stateMinimumDeltaEOK?: number;
+    collisionMinimumDeltaEOK?: number;
+    textMinimumContrast?: number;
+    nonTextMinimumContrast?: number;
+  }>;
+}
+
+export type CandidateStatus = "accepted" | "rejected";
+
+export type GenerationDiagnosticCode =
+  | "seed-alpha-unsupported"
+  | "exact-seed-outside-srgb"
+  | "preservation-bound-exceeded"
+  | "gamut-mapped"
+  | "contrast-failed"
+  | "state-order-failed"
+  | "state-distinction-failed"
+  | "decorative-order-failed"
+  | "decorative-step-collision"
+  | "family-collision";
+
+export interface GenerationDiagnostic {
+  readonly code: GenerationDiagnosticCode;
+  readonly severity: "error" | "warning";
+  readonly path: string;
+  readonly message: string;
+  readonly measured?: number;
+  readonly required?: number;
+}
+
+export interface CandidateColorValue {
+  readonly role: string;
+  readonly desired: StructuredColor;
+  readonly srgb: Readonly<{
+    color: StructuredColor;
+    hex: string;
+    mapped: boolean;
+    deltaEOK: number;
+    method: GamutMappingResult["method"];
+  }>;
+  readonly deltaFromSeed: number;
+}
+
+export interface ContrastMeasurement {
+  readonly kind: "contrast";
+  readonly foreground: string;
+  readonly background: string;
+  readonly ratio: number;
+  readonly minimum: number;
+  readonly passed: boolean;
+}
+
+export interface DifferenceMeasurement {
+  readonly kind: "difference";
+  readonly first: string;
+  readonly second: string;
+  readonly deltaEOK: number;
+  readonly minimum: number;
+  readonly passed: boolean;
+}
+
+export type CandidateMeasurement = ContrastMeasurement | DifferenceMeasurement;
+
+export interface SeedPreservationResult {
+  readonly requested: SeedPreservationPolicy;
+  readonly seedHex: string;
+  readonly anchorHex: string;
+  readonly adapted: boolean;
+  readonly deltaEOK: number;
+  readonly satisfied: boolean;
+}
+
+export type InterfaceRole =
+  | "soft"
+  | "softHover"
+  | "softPressed"
+  | "border"
+  | "borderStrong"
+  | "focusRing"
+  | "solid"
+  | "solidHover"
+  | "solidPressed"
+  | "text"
+  | "onSoft"
+  | "onSolid";
+
+export type NeutralRole =
+  | "canvas"
+  | "surface"
+  | "surfaceRaised"
+  | "surfaceHover"
+  | "surfacePressed"
+  | "border"
+  | "borderStrong"
+  | "textMuted"
+  | "text"
+  | "textStrong";
+
+export interface CandidateAppearance<TRole extends string = string> {
+  readonly referenceBackground: CandidateColorValue;
+  readonly roles: Readonly<Record<TRole, CandidateColorValue>>;
+  readonly measurements: readonly CandidateMeasurement[];
+  readonly diagnostics: readonly GenerationDiagnostic[];
+}
+
+export interface CandidateFamilyBase {
+  readonly id: string;
+  readonly name?: string;
+  readonly intent?: string;
+  readonly status: CandidateStatus;
+  readonly source: ColorRecord;
+  readonly preservation: SeedPreservationResult;
+  readonly anchor: CandidateColorValue;
+  readonly diagnostics: readonly GenerationDiagnostic[];
+}
+
+export interface InterfaceCandidateFamily extends CandidateFamilyBase {
+  readonly profile: "interface";
+  readonly appearances: Partial<
+    Record<PaletteAppearance, CandidateAppearance<InterfaceRole>>
+  >;
+}
+
+export interface NeutralCandidateFamily extends CandidateFamilyBase {
+  readonly profile: "neutral";
+  readonly appearances: Partial<
+    Record<PaletteAppearance, CandidateAppearance<NeutralRole>>
+  >;
+}
+
+export interface DecorativeCandidateAppearance {
+  readonly steps: readonly CandidateColorValue[];
+  readonly anchorStep: number;
+  readonly measurements: readonly DifferenceMeasurement[];
+  readonly diagnostics: readonly GenerationDiagnostic[];
+}
+
+export interface DecorativeCandidateFamily extends CandidateFamilyBase {
+  readonly profile: "decorative";
+  readonly appearances: Partial<
+    Record<PaletteAppearance, DecorativeCandidateAppearance>
+  >;
+}
+
+export type PaletteCandidateFamily =
+  | InterfaceCandidateFamily
+  | NeutralCandidateFamily
+  | DecorativeCandidateFamily;
 
 export interface ColorsCandidateEnvelope {
   readonly $schema: typeof COLORS_CANDIDATE_SCHEMA;
-  readonly seeds: readonly BrandSeedInput[];
+  readonly requestSchema: typeof COLOR_GENERATION_REQUEST_SCHEMA;
+  readonly status: CandidateStatus;
+  readonly families: readonly PaletteCandidateFamily[];
+  readonly diagnostics: readonly GenerationDiagnostic[];
+  readonly review: Readonly<{ status: "unreviewed" }>;
+  readonly provenance: ColorProvenance;
 }

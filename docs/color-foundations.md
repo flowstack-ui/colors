@@ -1,6 +1,6 @@
 # Color Foundations
 
-Status: **Batch 7.2 implemented**
+Status: **Batch 7.2 implemented; achromatic qualification extended in Batch 7.3**
 
 ## Inputs
 
@@ -30,6 +30,10 @@ Supported structured spaces are sRGB, linear sRGB, Display P3, A98 RGB,
 ProPhoto RGB, Rec. 2020, XYZ D50 and D65, Lab, LCH, Oklab, and OKLCH. Common
 CSS formats such as named colors, hex, RGB, HSL, and HWB normalize into one of
 those spaces.
+
+When an achromatic color is converted to LCH or OKLCH, its physically
+meaningless missing hue is serialized canonically as `0`. This keeps black,
+white, and gray outputs finite and deterministic without changing the color.
 
 The Design Tokens `none` component is rejected because it requires a separate
 interpolation context. Non-finite components, invalid alpha, invalid optional
@@ -113,5 +117,6 @@ therefore produce byte-stable JSON.
 
 These functions prove color math and declared pair relationships. They do not
 prove that a color has the right semantic meaning, that a palette is visually
-coherent, or that a complete Brick theme passes. Palette generation begins in
-Batch 7.3; Theme and Brick qualification remain Batch 7.4.
+coherent, or that a complete Brick theme passes. Batch 7.3 candidate generation
+is documented in [`palette-generation.md`](palette-generation.md); Theme and
+Brick qualification remain Batch 7.4.

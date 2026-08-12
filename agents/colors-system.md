@@ -16,8 +16,12 @@ component semantics or hiding changes to brand colors.
 - Require an explicit backdrop before comparing translucent colors.
 - Do not infer semantic meaning merely from hue.
 - Keep Colors outside React and the deployed browser runtime.
+- Treat `accepted` as passing only the candidate's declared Colors pairs. Theme
+  and rendered Brick qualification are separate later gates.
+- Keep named FLOWSTACK palettes labeled `raw-reference`; do not infer interface
+  semantics or accessibility from their 12 step positions.
 
 ## Current status
 
-The color foundations are implemented. No palette generator is yet public or
-Theme-qualified.
+The color foundations and experimental palette candidate generator are
+implemented. Generated candidates are not yet Theme- or Brick-qualified.

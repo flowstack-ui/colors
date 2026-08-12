@@ -7,10 +7,16 @@ import {
 } from "culori";
 
 import {
+  COLOR_GENERATION_REQUEST_SCHEMA,
   calculateContrast,
   convertColor,
+  defineColorGenerationRequest,
+  generatePaletteCandidate,
+  getNamedPalette,
   normalizeColor,
   validateColor,
+  type ColorGenerationRequest,
+  type ColorsCandidateEnvelope,
   type ColorRecord,
   type DtcgColorValue,
   type StructuredColor,
@@ -34,9 +40,25 @@ const structured: StructuredColor = convertColor(token, "display-p3").color;
 const contrast: number = calculateContrast("#000", "#fff").ratio;
 const unknownInput: unknown = token;
 const valid: boolean = validateColor(unknownInput).valid;
+const generationRequest: ColorGenerationRequest = defineColorGenerationRequest({
+  $schema: COLOR_GENERATION_REQUEST_SCHEMA,
+  seeds: [
+    { id: "brand", color: "#3157d5", profile: "interface" },
+    {
+      id: "campaign",
+      color: token,
+      profile: "decorative",
+      options: { steps: 5, anchorStep: 3 },
+    },
+  ],
+});
+const candidate: ColorsCandidateEnvelope = generatePaletteCandidate(generationRequest);
+const namedBlue: string = getNamedPalette("blue").light[8];
 
 void record;
 void structured;
 void contrast;
 void unknownInput;
 void valid;
+void candidate;
+void namedBlue;

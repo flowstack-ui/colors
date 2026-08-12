@@ -118,14 +118,30 @@ export function culoriToStructured(
     return culoriToStructured(rgb, "srgb", clampBoundary);
   }
   const keys = coordinateKeys[colorSpace];
-  const values = keys.map((key) => (color as unknown as Record<string, number>)[key]);
-  values.forEach((value, index) => assertFinite(value, `components.${index}`));
+  const values = keys.map((key, index) => {
+    const value = (color as unknown as Record<string, number | undefined>)[key];
+    // Hue is undefined for an achromatic polar color. Zero is the canonical,
+    // serializable representation because every hue describes the same color
+    // when chroma is zero.
+    if (
+      key === "h" &&
+      value === undefined &&
+      (color as unknown as Record<string, number | undefined>)[keys[index - 1] ?? ""] === 0
+    ) {
+      return 0;
+    }
+    return value;
+  });
+  const finiteValues = values.map((value, index) => {
+    assertFinite(value, `components.${index}`);
+    return value;
+  });
   const alpha = color.alpha ?? 1;
   assertAlpha(alpha, "alpha");
   const normalize = clampBoundary ? clampGamutBoundary : normalizeNumber;
   return {
     colorSpace,
-    components: values.map(normalize) as unknown as ColorComponents,
+    components: finiteValues.map(normalize) as unknown as ColorComponents,
     alpha: normalizeNumber(alpha),
   };
 }

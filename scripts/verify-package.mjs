@@ -43,6 +43,7 @@ try {
     "package/docs/architecture.md",
     "package/docs/color-foundations.md",
     "package/docs/dependency-qualification.md",
+    "package/docs/palette-generation.md",
     "package/docs/testing.md",
     "package/package.json",
   ]) {
@@ -53,20 +54,23 @@ try {
   await mkdir(consumerDirectory, { recursive: true });
   await writeFile(resolve(consumerDirectory, "package.json"), JSON.stringify({ name: "colors-clean-consumer", private: true, type: "module" }, null, 2));
   await writeFile(resolve(consumerDirectory, "index.mjs"), `
-import { COLORS_CANDIDATE_SCHEMA, defineColorsCandidate } from "@flowstack-ui/colors";
+import {
+  COLOR_GENERATION_REQUEST_SCHEMA,
+  generatePaletteCandidate,
+} from "@flowstack-ui/colors";
 import {
   calculateContrast,
   normalizeColor,
 } from "@flowstack-ui/colors";
 
-const candidate = defineColorsCandidate({
-  $schema: COLORS_CANDIDATE_SCHEMA,
-  seeds: [{ id: "primary", color: "#3157d5", profile: "interface", preservation: { mode: "exact" } }],
+const candidate = generatePaletteCandidate({
+  $schema: COLOR_GENERATION_REQUEST_SCHEMA,
+  seeds: [{ id: "primary", color: "#0090ff", profile: "interface" }],
 });
 
 const color = normalizeColor("color(display-p3 1 0.5 0)");
 const contrast = calculateContrast("#000", "#fff");
-console.log(candidate.$schema, candidate.seeds[0].id, color.srgb.hex, contrast.ratio);
+console.log(candidate.$schema, candidate.families[0].id, color.srgb.hex, contrast.ratio);
 `);
   await writeFile(resolve(consumerDirectory, "index.ts"), `
 import {
@@ -101,7 +105,9 @@ void ratio;
   run(process.execPath, [resolve(repositoryRoot, "node_modules/typescript/bin/tsc"), "-p", "tsconfig.json"], consumerDirectory);
 
   const installedPackage = JSON.parse(await readFile(resolve(consumerDirectory, "node_modules/@flowstack-ui/colors/package.json"), "utf8"));
-  assert.deepEqual(installedPackage.dependencies, { culori: "^4.0.2" });
+  assert.deepEqual(installedPackage.dependencies, {
+    culori: "^4.0.2",
+  });
   for (const prohibited of ["react", "@flowstack-ui/brick", "@flowstack-ui/theme"]) {
     assert.equal(prohibited in installedPackage.dependencies, false);
   }

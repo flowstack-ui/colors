@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Add deterministic multi-seed `interface`, `neutral`, and `decorative`
+  candidate generation with independent light/dark relationships, exact or
+  explicitly bounded seed preservation, measured contrast and state gates,
+  collision warnings, gamut diagnostics, complete provenance, and explainable
+  rejection.
+- Add 31 standalone FLOWSTACK named light/dark palettes as deterministic
+  `raw-reference` output without representing them as accessible themes.
+- Canonicalize the meaningless hue of achromatic LCH and OKLCH conversions as
+  zero so black, white, and gray remain finite and serializable.
 - Implement CSS and Design Tokens color parsing, validation, structured
   normalization, conversion, CSS Color 4 gamut mapping, exact WCAG contrast,
   deltaEOK and CIEDE2000 difference, stable diagnostics, and deterministic
@@ -16,5 +25,5 @@
   output for qualification before implementation.
 - Select Culori 4.0.2 for the implementation after comparing it with
   Color.js 0.7.1 across parsing, conversion, gamut, contrast, package, and
-  deterministic evidence. Batch 7.2 promotes it to the sole runtime dependency
-  because shipped source now uses its qualified color science.
+  deterministic evidence. Batch 7.2 promotes it to the color-science runtime
+  dependency because shipped source uses its qualified operations.

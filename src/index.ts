@@ -18,12 +18,26 @@ export {
 export { FlowstackColorError } from "./errors.js";
 export { createColorProvenance } from "./provenance.js";
 export {
+  NAMED_PALETTE_NAMES,
+  getNamedPalette,
+  isNamedPaletteName,
+} from "./named-palettes.js";
+export {
+  defineColorGenerationRequest,
+  generatePaletteCandidate,
+} from "./generator.js";
+export {
+  COLOR_GENERATION_REQUEST_SCHEMA,
   COLOR_PROVENANCE_SCHEMA,
   COLOR_RECORD_SCHEMA,
   COLORS_CANDIDATE_SCHEMA,
 } from "./types.js";
 export type {
   BrandSeedInput,
+  CandidateAppearance,
+  CandidateColorValue,
+  CandidateMeasurement,
+  CandidateStatus,
   ColorComponents,
   ColorConversionResult,
   ColorDiagnostic,
@@ -31,27 +45,40 @@ export type {
   ColorDifferenceMethod,
   ColorDifferenceReport,
   ColorInput,
+  ColorGenerationRequest,
   ColorProvenance,
   ColorRecord,
   ColorSource,
   ColorsCandidateEnvelope,
   ColorValidationResult,
   ContrastReport,
+  ContrastMeasurement,
+  DecorativeCandidateAppearance,
+  DecorativeCandidateFamily,
+  DecorativeSeedInput,
   DtcgColorComponent,
   DtcgColorToken,
   DtcgColorValue,
+  DifferenceMeasurement,
+  GenerationDiagnostic,
+  GenerationDiagnosticCode,
   GamutMappingResult,
+  InterfaceCandidateFamily,
+  InterfaceRole,
+  InterfaceSeedInput,
+  NeutralCandidateFamily,
+  NeutralRole,
+  NeutralSeedInput,
+  NamedPaletteName,
+  NamedPaletteReference,
   OutputGamut,
+  PaletteAppearance,
+  PaletteCandidateFamily,
   PaletteProfile,
+  PaletteSeedBase,
+  SeedPreservationResult,
   SeedPreservationPolicy,
   StructuredColor,
   SupportedColorSpace,
+  TwelveStepScale,
 } from "./types.js";
-
-import type { ColorsCandidateEnvelope } from "./types.js";
-
-export function defineColorsCandidate<T extends ColorsCandidateEnvelope>(
-  candidate: T,
-): T {
-  return candidate;
-}

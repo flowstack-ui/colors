@@ -12,7 +12,7 @@ export function createColorProvenance(
   operation: ColorProvenance["operation"]["name"],
   parameters: ColorProvenance["parameters"] = {},
 ): ColorProvenance {
-  if (!["normalize", "convert", "gamut-map", "contrast", "difference"].includes(operation)) {
+  if (!["normalize", "convert", "gamut-map", "contrast", "difference", "generate"].includes(operation)) {
     throw new TypeError(`Unsupported color provenance operation ${JSON.stringify(operation)}.`);
   }
   const normalizedParameters = Object.fromEntries(

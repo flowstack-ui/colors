@@ -64,6 +64,15 @@ test("converts without silently gamut mapping", () => {
   assert.ok(Math.abs(roundTrip.components[2]) < 1e-12);
 });
 
+test("canonicalizes the meaningless hue of achromatic polar colors", () => {
+  for (const input of ["#000000", "#777777", "#ffffff"]) {
+    const converted = convertColor(input, "oklch").color;
+    assert.equal(converted.colorSpace, "oklch");
+    assert.ok(Math.abs(converted.components[1]) < 1e-12);
+    assert.equal(converted.components[2], 0);
+  }
+});
+
 test("maps out-of-gamut colors with complete diagnostics", () => {
   const result = mapColorToGamut("oklch(90% 0.4 100)");
   assert.equal(result.targetGamut, "srgb");

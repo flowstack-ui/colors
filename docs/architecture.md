@@ -1,6 +1,6 @@
 # Colors Architecture
 
-Status: **Batch 7.2 color foundations**
+Status: **Batch 7.3 candidate generation**
 
 Colors owns framework-independent color science and deterministic palette
 candidate generation. Theme owns semantic mapping, exact editable theme
@@ -34,6 +34,11 @@ because its CSS originated from a candidate.
 The `flowstack.colors-candidate.v1` boundary remains experimental until real
 generation evidence and Theme interchange finalize it in Batch 7.4.
 
+Batch 7.3 implements the boundary as a deterministic file-shaped result. An
+`accepted` family has passed only its declared Colors measurements. The result
+remains `unreviewed`, carries no semantic Brick mapping, and cannot be called a
+theme. See [`palette-generation.md`](palette-generation.md).
+
 ## Color record
 
 `flowstack.color-record.v1` is the stable Batch 7.2 evidence envelope. It
@@ -43,3 +48,11 @@ fallback with explicit gamut diagnostics, and deterministic provenance.
 Conversions do not silently map gamut. Gamut mapping is a separate named
 operation. Contrast maps to exact sRGB and rejects alpha without a backdrop.
 See [`color-foundations.md`](color-foundations.md) for the API contract.
+
+## Reference palettes
+
+Thirty-one standalone FLOWSTACK named families are available through
+`getNamedPalette()`. They use FLOWSTACK seeds and the same deterministic
+decorative generator exposed to consumers, with no external palette package.
+Every result is marked `raw-reference`, preserving useful light/dark 12-step
+output without claiming that its values satisfy Theme or Brick.

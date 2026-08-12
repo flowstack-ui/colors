@@ -118,5 +118,7 @@ therefore produce byte-stable JSON.
 These functions prove color math and declared pair relationships. They do not
 prove that a color has the right semantic meaning, that a palette is visually
 coherent, or that a complete Brick theme passes. Batch 7.3 candidate generation
-is documented in [`palette-generation.md`](palette-generation.md); Theme and
-Brick qualification remain Batch 7.4.
+is documented in [`palette-generation.md`](palette-generation.md). Batch 7.4
+qualified the serialized Colors-to-Theme boundary and one complete generated
+fixture; every future candidate still needs its own semantic and rendered
+qualification.

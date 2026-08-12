@@ -57,6 +57,7 @@ try {
 import {
   COLOR_GENERATION_REQUEST_SCHEMA,
   generatePaletteCandidate,
+  reviewPaletteCandidate,
 } from "@flowstack-ui/colors";
 import {
   calculateContrast,
@@ -67,10 +68,11 @@ const candidate = generatePaletteCandidate({
   $schema: COLOR_GENERATION_REQUEST_SCHEMA,
   seeds: [{ id: "primary", color: "#0090ff", profile: "interface" }],
 });
+const reviewed = reviewPaletteCandidate(candidate, { status: "accepted" });
 
 const color = normalizeColor("color(display-p3 1 0.5 0)");
 const contrast = calculateContrast("#000", "#fff");
-console.log(candidate.$schema, candidate.families[0].id, color.srgb.hex, contrast.ratio);
+console.log(candidate.$schema, candidate.families[0].id, reviewed.review.status, color.srgb.hex, contrast.ratio);
 `);
   await writeFile(resolve(consumerDirectory, "index.ts"), `
 import {
@@ -101,7 +103,7 @@ void ratio;
 
   run("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", archive], consumerDirectory);
   const consumerOutput = run(process.execPath, ["index.mjs"], consumerDirectory).trim();
-  assert.equal(consumerOutput, "flowstack.colors-candidate.v1 primary #ff7d00 21");
+  assert.equal(consumerOutput, "flowstack.colors-candidate.v1 primary accepted #ff7d00 21");
   run(process.execPath, [resolve(repositoryRoot, "node_modules/typescript/bin/tsc"), "-p", "tsconfig.json"], consumerDirectory);
 
   const installedPackage = JSON.parse(await readFile(resolve(consumerDirectory, "node_modules/@flowstack-ui/colors/package.json"), "utf8"));

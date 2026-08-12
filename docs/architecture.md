@@ -1,6 +1,6 @@
 # Colors Architecture
 
-Status: **Batch 7.3 candidate generation**
+Status: **Batch 7.4 candidate interchange qualified**
 
 Colors owns framework-independent color science and deterministic palette
 candidate generation. Theme owns semantic mapping, exact editable theme
@@ -31,13 +31,21 @@ because its CSS originated from a candidate.
 - Existing named palettes and requested 12-step scales remain available as
   raw/reference output without automatic Theme qualification.
 
-The `flowstack.colors-candidate.v1` boundary remains experimental until real
-generation evidence and Theme interchange finalize it in Batch 7.4.
+`flowstack.colors-candidate.v1` is the finalized serialized interchange
+boundary for the first release. Generation produces an `unreviewed` result;
+`reviewPaletteCandidate()` records an explicit human `accepted`, `edited`, or
+`rejected` decision without changing its measurements. An accepted family has
+passed only its declared Colors measurements, carries no semantic Brick
+mapping, and cannot be called a theme. See
+[`palette-generation.md`](palette-generation.md).
 
-Batch 7.3 implements the boundary as a deterministic file-shaped result. An
-`accepted` family has passed only its declared Colors measurements. The result
-remains `unreviewed`, carries no semantic Brick mapping, and cannot be called a
-theme. See [`palette-generation.md`](palette-generation.md).
+Batch 7.4 proved the boundary without coupling the packages: Theme reads the
+candidate JSON, imports selected families as project palettes, expands explicit
+semantic assignments against the installed Brick contract, and produces an
+ordinary editable Theme. One seven-family candidate passed all 152 compiled
+Brick contrast evaluations and the complete 80-route, four-profile rendered
+catalog. That evidence validates the interchange; it does not preapprove future
+candidates.
 
 ## Color record
 

@@ -1,6 +1,6 @@
 # Palette Candidate Generation
 
-Status: **Batch 7.3 implemented; interchange schema remains experimental**
+Status: **Batch 7.4 implemented; interchange schema qualified**
 
 Colors turns one or more explicit seeds into reviewable palette candidates. It
 does not turn them into a Theme and never guesses semantic meaning from hue.
@@ -59,13 +59,18 @@ Colors measures:
 - solid, strong border, and focus ring against that background.
 
 Reference backgrounds default to `#ffffff` for light and `#111111` for dark.
-An author may provide opaque alternatives. They are recorded in the candidate;
-Theme must remeasure against its real surfaces later.
+An author may provide one or more opaque backgrounds per appearance with
+`options.referenceBackgrounds`. Colors then finds `text`, `borderStrong`, and
+`focusRing` values that pass every supplied surface and records every exact
+measurement. This lets a Theme candidate account for canvas, raised, overlay,
+and similar real surfaces before mapping. Theme still remeasures the actual
+Brick pairs after mapping.
 
 ### Neutral
 
 A neutral family uses the seed hue and bounded chroma influence to propose
-canvas, surfaces, surface states, borders, and text levels. The exact seed is
+canvas, surfaces, surface states, borders, ordinary text levels, and an
+inverse text foreground. The exact seed is
 kept as a separate family anchor rather than forced into an unsuitable semantic
 role. Text and strong-border pairs and interactive surface distinctions are
 measured in each appearance.
@@ -118,12 +123,21 @@ families, not Theme-qualified relationships.
 
 ## Candidate meaning
 
-`flowstack.colors-candidate.v1` currently records families, measurements,
+`flowstack.colors-candidate.v1` records families, measurements,
 diagnostics, source records, preservation, `unreviewed` status, and deterministic
 algorithm provenance. It has no timestamps or random values, so identical
 normalized inputs produce identical JSON bytes.
 
-The schema stays experimental through Batch 7.4. A person must review the
-candidate, Theme must explicitly map chosen values into an editable theme, and
-the actual Brick contract and rendered catalog must pass before any generated
-palette can be called qualified.
+Batch 7.4 finalized this serialized boundary after a reviewed seven-family
+candidate was scaffolded into an ordinary editable Theme, passed all 152 exact
+Brick contrast evaluations, and passed the complete rendered catalog in light
+and dark at desktop and mobile sizes. That qualifies the interchange contract,
+not every future candidate. A person must still review each candidate, Theme
+must explicitly map its chosen values, and the relevant product must earn its
+own contract and rendered qualification.
+
+`reviewPaletteCandidate(candidate, decision)` records an explicit `accepted`,
+`edited`, or `rejected` human decision without mutating generation evidence or
+adding timestamps and environment data. A generator-rejected candidate cannot
+be marked accepted without edits. Theme interchange accepts only reviewed
+candidates and still validates every exact mapped value independently.

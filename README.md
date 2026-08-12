@@ -4,7 +4,9 @@ Deterministic, framework-independent color and palette candidate tooling for
 Flowstack UI.
 
 > The package is in its private `0.0.0` qualification stage. It is not
-> published, and generated candidates are not yet Theme- or Brick-qualified.
+> published. The interchange has passed a real Theme and complete Brick
+> catalog qualification, but each new candidate still needs its own review and
+> qualification.
 
 ## Boundary
 
@@ -39,6 +41,7 @@ import {
   getNamedPalette,
   mapColorToGamut,
   normalizeColor,
+  reviewPaletteCandidate,
   validateColor,
 } from "@flowstack-ui/colors";
 
@@ -70,6 +73,11 @@ const candidate = generatePaletteCandidate({
   ],
 });
 
+const reviewed = reviewPaletteCandidate(candidate, {
+  status: "accepted",
+  notes: "Approved for Theme mapping.",
+});
+
 const flowstackBlue = getNamedPalette("blue");
 // A FLOWSTACK-generated 12-step raw reference, not a semantic theme.
 ```
@@ -83,9 +91,10 @@ color is valid for parsing, normalization, conversion, and gamut mapping, but
 comparison fails with `alpha-requires-backdrop` until a future API accepts an
 explicit backdrop.
 
-An accepted candidate means only that its declared Colors relationships pass.
-It is not a theme. Theme must map its exact values, revalidate the actual Brick
-pairs, and earn rendered qualification separately.
+An accepted generator result means only that its declared Colors relationships
+pass. It is not a theme. A person records an explicit review decision, then
+Theme may scaffold selected families from the serialized candidate, revalidate
+the actual Brick pairs, and earn rendered qualification separately.
 
 ## Development
 

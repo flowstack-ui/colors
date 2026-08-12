@@ -18,6 +18,7 @@ import {
   type CandidateAppearance,
   type CandidateColorValue,
   type CandidateMeasurement,
+  type CandidateReviewDecision,
   type ColorGenerationRequest,
   type ColorsCandidateEnvelope,
   type DecorativeCandidateAppearance,
@@ -190,19 +191,27 @@ function validateRequest(request: ColorGenerationRequest): ResolvedConstraints {
         if (appearance !== "light" && appearance !== "dark") {
           requestError(`${path}.options.referenceBackgrounds.${appearance}`, "unsupported appearance");
         }
-        try {
-          if (parseColor(background).alpha !== 1) {
-            requestError(
-              `${path}.options.referenceBackgrounds.${appearance}`,
-              "an opaque reference background is required",
-            );
-          }
-        } catch (error) {
+        if (!Array.isArray(background) || background.length === 0) {
           requestError(
             `${path}.options.referenceBackgrounds.${appearance}`,
-            error instanceof Error ? error.message : "invalid color",
+            "expected a non-empty array of opaque reference backgrounds",
           );
         }
+        background.forEach((entry, index) => {
+          try {
+            if (parseColor(entry).alpha !== 1) {
+              requestError(
+                `${path}.options.referenceBackgrounds.${appearance}.${index}`,
+                "an opaque reference background is required",
+              );
+            }
+          } catch (error) {
+            requestError(
+              `${path}.options.referenceBackgrounds.${appearance}.${index}`,
+              error instanceof Error ? error.message : "invalid color",
+            );
+          }
+        });
       }
     }
     if (seed.profile === "decorative") {
@@ -322,7 +331,7 @@ function contrastColorNear(
   targetLightness: number,
   chroma: number,
   hue: number,
-  background: CandidateColorValue,
+  backgrounds: readonly CandidateColorValue[],
   minimum: number,
   seedColor: StructuredColor,
 ): CandidateColorValue {
@@ -331,7 +340,9 @@ function contrastColorNear(
     candidates.push(candidateColor(role, oklch(index / 100, chroma, hue), seedColor));
   }
   const passing = candidates.filter((value) =>
-    calculateContrast(value.srgb.hex, background.srgb.hex).ratio >= minimum
+    backgrounds.every((background) =>
+      calculateContrast(value.srgb.hex, background.srgb.hex).ratio >= minimum
+    )
   );
   passing.sort((first, second) => {
     const firstDistance = Math.abs(exactLightness(first) - targetLightness);
@@ -341,7 +352,7 @@ function contrastColorNear(
       ? exactLightness(second) - exactLightness(first)
       : exactLightness(first) - exactLightness(second);
   });
-  return passing[0] ?? bestBinaryForeground(role, [background], seedColor);
+  return passing[0] ?? bestBinaryForeground(role, backgrounds, seedColor);
 }
 
 function gamutDiagnostics(
@@ -446,12 +457,13 @@ function interfaceAppearance(
   const seedColor = anchor.srgb.color;
   const seedOklch = convertStructuredColor(seedColor, "oklch");
   const [anchorLightness, anchorChroma, hue] = seedOklch.components;
-  const referenceInput = seed.options?.referenceBackgrounds?.[appearance]
-    ?? (appearance === "light" ? "#ffffff" : "#111111");
-  const reference = candidateColor("referenceBackground", parseColor(referenceInput), seedColor);
-  if (reference.srgb.color.alpha !== 1) {
-    requestError(`${path}.referenceBackground`, "an opaque reference background is required");
-  }
+  const referenceInputs = seed.options?.referenceBackgrounds?.[appearance]
+    ?? [appearance === "light" ? "#ffffff" : "#111111"];
+  const references = referenceInputs.map((input, index) => candidateColor(
+    `referenceBackground-${index + 1}`,
+    parseColor(input),
+    seedColor,
+  ));
   const direction = appearance === "light" ? -1 : 1;
   const softTargets = appearance === "light" ? [0.97, 0.925, 0.875] : [0.17, 0.225, 0.285];
   const soft = candidateColor("soft", oklch(softTargets[0], anchorChroma * 0.1, hue), seedColor);
@@ -468,7 +480,7 @@ function interfaceAppearance(
     appearance === "light" ? 0.67 : 0.53,
     anchorChroma * 0.55,
     hue,
-    reference,
+    references,
     constraints.nonTextMinimumContrast,
     seedColor,
   );
@@ -478,7 +490,7 @@ function interfaceAppearance(
     anchorLightness,
     anchorChroma,
     hue,
-    reference,
+    references,
     constraints.nonTextMinimumContrast,
     seedColor,
   );
@@ -499,7 +511,7 @@ function interfaceAppearance(
     appearance,
     seedOklch,
     seedColor,
-    [reference, ...softBackgrounds],
+    [...references, ...softBackgrounds],
     constraints.textMinimumContrast,
   );
   const onSoft = withRole(text, "onSoft");
@@ -533,11 +545,13 @@ function interfaceAppearance(
   for (const background of solidBackgrounds) {
     measureContrast(measurements, diagnostics, onSolid, background, constraints.textMinimumContrast, `${path}.pairs.onSolid-${background.role}`);
   }
-  measureContrast(measurements, diagnostics, text, reference, constraints.textMinimumContrast, `${path}.pairs.text-referenceBackground`);
-  measureContrast(measurements, diagnostics, solid, reference, constraints.nonTextMinimumContrast, `${path}.pairs.solid-referenceBackground`);
-  measureContrast(measurements, diagnostics, focusRing, reference, constraints.nonTextMinimumContrast, `${path}.pairs.focusRing-referenceBackground`);
-  measureContrast(measurements, diagnostics, borderStrong, reference, constraints.nonTextMinimumContrast, `${path}.pairs.borderStrong-referenceBackground`);
-  return { referenceBackground: reference, roles, measurements, diagnostics };
+  for (const reference of references) {
+    measureContrast(measurements, diagnostics, text, reference, constraints.textMinimumContrast, `${path}.pairs.text-${reference.role}`);
+    measureContrast(measurements, diagnostics, solid, reference, constraints.nonTextMinimumContrast, `${path}.pairs.solid-${reference.role}`);
+    measureContrast(measurements, diagnostics, focusRing, reference, constraints.nonTextMinimumContrast, `${path}.pairs.focusRing-${reference.role}`);
+    measureContrast(measurements, diagnostics, borderStrong, reference, constraints.nonTextMinimumContrast, `${path}.pairs.borderStrong-${reference.role}`);
+  }
+  return { referenceBackgrounds: references, roles, measurements, diagnostics };
 }
 
 function buildInterface(
@@ -567,7 +581,7 @@ function neutralAppearance(
   const [, seedChroma, hue] = seedOklch.components;
   const chroma = Math.min(seedChroma * 0.12, 0.025);
   const lightness = appearance === "light"
-    ? [0.995, 0.975, 0.95, 0.915, 0.875, 0.78]
+    ? [0.995, 0.975, 0.95, 0.925, 0.875, 0.78]
     : [0.105, 0.14, 0.18, 0.225, 0.28, 0.39];
   const canvas = candidateColor("canvas", oklch(lightness[0], chroma * 0.2, hue), seedColor);
   const surface = candidateColor("surface", oklch(lightness[1], chroma * 0.35, hue), seedColor);
@@ -581,7 +595,7 @@ function neutralAppearance(
     appearance === "light" ? 0.62 : 0.55,
     chroma,
     hue,
-    canvas,
+    [canvas],
     constraints.nonTextMinimumContrast,
     seedColor,
   );
@@ -613,6 +627,11 @@ function neutralAppearance(
     constraints.textMinimumContrast,
     appearance === "light" ? 0.18 : 0.94,
   );
+  const textInverse = bestBinaryForeground(
+    "textInverse",
+    [text, textStrong],
+    seedColor,
+  );
   const roles: Record<NeutralRole, CandidateColorValue> = {
     canvas,
     surface,
@@ -624,6 +643,7 @@ function neutralAppearance(
     textMuted,
     text,
     textStrong,
+    textInverse,
   };
   const diagnostics = gamutDiagnostics(Object.values(roles), `${path}.roles`);
   const measurements: CandidateMeasurement[] = [];
@@ -636,9 +656,19 @@ function neutralAppearance(
       measureContrast(measurements, diagnostics, foreground, background, constraints.textMinimumContrast, `${path}.pairs.${foreground.role}-${background.role}`);
     }
   }
+  for (const background of [text, textStrong]) {
+    measureContrast(
+      measurements,
+      diagnostics,
+      textInverse,
+      background,
+      constraints.textMinimumContrast,
+      `${path}.pairs.textInverse-${background.role}`,
+    );
+  }
   measureContrast(measurements, diagnostics, borderStrong, canvas, constraints.nonTextMinimumContrast, `${path}.pairs.borderStrong-canvas`);
   return {
-    referenceBackground: withRole(canvas, "referenceBackground"),
+    referenceBackgrounds: [withRole(canvas, "referenceBackground-1")],
     roles,
     measurements,
     diagnostics,
@@ -902,4 +932,28 @@ export function generatePaletteCandidate(
 
 export function defineColorGenerationRequest<T extends ColorGenerationRequest>(request: T): T {
   return request;
+}
+
+export function reviewPaletteCandidate(
+  candidate: ColorsCandidateEnvelope,
+  decision: CandidateReviewDecision,
+): ColorsCandidateEnvelope {
+  if (!["accepted", "edited", "rejected"].includes(decision.status)) {
+    throw new TypeError("A candidate review must be accepted, edited, or rejected.");
+  }
+  if (decision.status === "accepted" && candidate.status !== "accepted") {
+    throw new TypeError("A rejected Colors candidate cannot be accepted without edits.");
+  }
+  if (decision.notes !== undefined && (
+    typeof decision.notes !== "string" || decision.notes.trim() === ""
+  )) {
+    throw new TypeError("Candidate review notes must be a non-empty string when provided.");
+  }
+  return {
+    ...candidate,
+    review: {
+      status: decision.status,
+      ...(decision.notes === undefined ? {} : { notes: decision.notes }),
+    },
+  };
 }

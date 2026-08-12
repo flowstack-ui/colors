@@ -25,6 +25,7 @@ export {
 export {
   defineColorGenerationRequest,
   generatePaletteCandidate,
+  reviewPaletteCandidate,
 } from "./generator.js";
 export {
   COLOR_GENERATION_REQUEST_SCHEMA,
@@ -37,6 +38,9 @@ export type {
   CandidateAppearance,
   CandidateColorValue,
   CandidateMeasurement,
+  CandidateReview,
+  CandidateReviewDecision,
+  CandidateReviewStatus,
   CandidateStatus,
   ColorComponents,
   ColorConversionResult,

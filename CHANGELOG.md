@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Added
+
+- Explicit deterministic candidate review decisions for build-time interchange.
+- Neutral `textInverse` candidates measured against ordinary strong text roles.
+- Multiple exact reference backgrounds per interface appearance so one family
+  can be qualified against every intended project surface.
+
 - Add deterministic multi-seed `interface`, `neutral`, and `decorative`
   candidate generation with independent light/dark relationships, exact or
   explicitly bounded seed preservation, measured contrast and state gates,
@@ -11,6 +18,8 @@
   `raw-reference` output without representing them as accessible themes.
 - Canonicalize the meaningless hue of achromatic LCH and OKLCH conversions as
   zero so black, white, and gray remain finite and serializable.
+- Add neutral inverse-text generation and explicit serializable candidate
+  review decisions required by the Theme interchange qualification.
 - Implement CSS and Design Tokens color parsing, validation, structured
   normalization, conversion, CSS Color 4 gamut mapping, exact WCAG contrast,
   deltaEOK and CIEDE2000 difference, stable diagnostics, and deterministic

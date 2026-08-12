@@ -17,11 +17,16 @@ component semantics or hiding changes to brand colors.
 - Do not infer semantic meaning merely from hue.
 - Keep Colors outside React and the deployed browser runtime.
 - Treat `accepted` as passing only the candidate's declared Colors pairs. Theme
-  and rendered Brick qualification are separate later gates.
+  mapping and rendered Brick qualification remain separate per-candidate gates.
+- Record an explicit review decision before giving a serialized candidate to
+  Theme, and preserve the exact evidence when accepting or rejecting it.
+- Supply every intended interface reference surface when a family must work
+  across canvas, raised, overlay, or similar backgrounds.
 - Keep named FLOWSTACK palettes labeled `raw-reference`; do not infer interface
   semantics or accessibility from their 12 step positions.
 
 ## Current status
 
-The color foundations and experimental palette candidate generator are
-implemented. Generated candidates are not yet Theme- or Brick-qualified.
+The color foundations, candidate generator, and serialized Theme interchange
+are implemented and have passed one complete real Brick qualification. New
+candidates remain unreviewed and unqualified until they pass the same workflow.

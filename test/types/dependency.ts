@@ -14,6 +14,7 @@ import {
   generatePaletteCandidate,
   getNamedPalette,
   normalizeColor,
+  reviewPaletteCandidate,
   validateColor,
   type ColorGenerationRequest,
   type ColorsCandidateEnvelope,
@@ -53,6 +54,9 @@ const generationRequest: ColorGenerationRequest = defineColorGenerationRequest({
   ],
 });
 const candidate: ColorsCandidateEnvelope = generatePaletteCandidate(generationRequest);
+const reviewed: ColorsCandidateEnvelope = reviewPaletteCandidate(candidate, {
+  status: "accepted",
+});
 const namedBlue: string = getNamedPalette("blue").light[8];
 
 void record;
@@ -61,4 +65,5 @@ void contrast;
 void unknownInput;
 void valid;
 void candidate;
+void reviewed;
 void namedBlue;

@@ -10,6 +10,7 @@ import {
   generatePaletteCandidate,
   getNamedPalette,
   isNamedPaletteName,
+  reviewPaletteCandidate,
 } from "../dist/index.js";
 
 function request(seeds, constraints) {
@@ -74,6 +75,63 @@ test("generates light and dark relationships independently", () => {
   assert.ok(dark.solidHover.desired.components[0] > anchorLightness);
   assert.ok(light.softHover.desired.components[0] < light.soft.desired.components[0]);
   assert.ok(dark.softHover.desired.components[0] > dark.soft.desired.components[0]);
+});
+
+test("qualifies interface roles against every supplied reference surface", () => {
+  const references = {
+    light: ["#fdfdfe", "#f6f7f8", "#edeef0", "#e1e3e5"],
+    dark: ["#040404", "#09090a", "#111213", "#1b1c1d"],
+  };
+  const family = generatePaletteCandidate(request([{
+    id: "brand",
+    color: "#7b65d1",
+    profile: "interface",
+    options: { referenceBackgrounds: references },
+  }])).families[0];
+
+  assert.equal(family.status, "accepted");
+  for (const appearance of ["light", "dark"]) {
+    const result = family.appearances[appearance];
+    assert.deepEqual(
+      result.referenceBackgrounds.map(({ srgb }) => srgb.hex),
+      references[appearance],
+    );
+    for (const background of result.referenceBackgrounds) {
+      for (const foreground of ["text", "solid", "focusRing", "borderStrong"]) {
+        const measurement = result.measurements.find((entry) =>
+          entry.kind === "contrast"
+          && entry.foreground === foreground
+          && entry.background === background.role
+        );
+        assert.equal(measurement?.passed, true, `${appearance} ${foreground} on ${background.role}`);
+      }
+    }
+  }
+});
+
+test("records an explicit human review decision without mutating generation evidence", () => {
+  const candidate = generatePaletteCandidate(request([
+    { id: "brand", color: "#3157d5", profile: "interface" },
+  ]));
+  const reviewed = reviewPaletteCandidate(candidate, {
+    status: "accepted",
+    notes: "Approved for Theme scaffold qualification.",
+  });
+
+  assert.equal(candidate.review.status, "unreviewed");
+  assert.deepEqual(reviewed.review, {
+    status: "accepted",
+    notes: "Approved for Theme scaffold qualification.",
+  });
+  assert.equal(reviewed.families, candidate.families);
+  assert.throws(
+    () => reviewPaletteCandidate({ ...candidate, status: "rejected" }, { status: "accepted" }),
+    /cannot be accepted without edits/u,
+  );
+  assert.throws(
+    () => reviewPaletteCandidate(candidate, { status: "accepted", notes: "" }),
+    /non-empty string/u,
+  );
 });
 
 test("rejects an impossible exact seed and accepts an explicitly bounded adaptation", () => {
@@ -206,6 +264,15 @@ test("rejects malformed requests instead of inventing defaults", () => {
     ])),
     /is required for bounded preservation/u,
   );
+  assert.throws(
+    () => generatePaletteCandidate(request([{
+      id: "bad",
+      color: "#3157d5",
+      profile: "interface",
+      options: { referenceBackgrounds: { light: [] } },
+    }])),
+    /non-empty array/u,
+  );
 });
 
 test("keeps every accepted difficult-color candidate inside its measured gates", () => {
@@ -255,6 +322,6 @@ test("reproduces the candidate algorithm golden bytes", () => {
   ]))), bytes);
   assert.equal(
     createHash("sha256").update(bytes).digest("hex"),
-    "1da792df91b5bcf988ab537afc5bd19200a609c72c495e73fb582df217eaef5c",
+    "a55b080b9993e8e820668d6eb681bbb98be258c68095d7462a9a6e202a167420",
   );
 });

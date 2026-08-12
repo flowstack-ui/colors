@@ -235,7 +235,9 @@ export interface InterfaceSeedInput extends PaletteSeedBase {
   readonly profile: "interface";
   readonly options?: Readonly<{
     appearances?: readonly PaletteAppearance[];
-    referenceBackgrounds?: Partial<Record<PaletteAppearance, ColorInput>>;
+    referenceBackgrounds?: Partial<
+      Record<PaletteAppearance, readonly [ColorInput, ...ColorInput[]]>
+    >;
   }>;
 }
 
@@ -272,6 +274,22 @@ export interface ColorGenerationRequest {
 }
 
 export type CandidateStatus = "accepted" | "rejected";
+
+export type CandidateReviewStatus =
+  | "unreviewed"
+  | "accepted"
+  | "edited"
+  | "rejected";
+
+export interface CandidateReview {
+  readonly status: CandidateReviewStatus;
+  readonly notes?: string;
+}
+
+export interface CandidateReviewDecision {
+  readonly status: Exclude<CandidateReviewStatus, "unreviewed">;
+  readonly notes?: string;
+}
 
 export type GenerationDiagnosticCode =
   | "seed-alpha-unsupported"
@@ -360,10 +378,11 @@ export type NeutralRole =
   | "borderStrong"
   | "textMuted"
   | "text"
-  | "textStrong";
+  | "textStrong"
+  | "textInverse";
 
 export interface CandidateAppearance<TRole extends string = string> {
-  readonly referenceBackground: CandidateColorValue;
+  readonly referenceBackgrounds: readonly CandidateColorValue[];
   readonly roles: Readonly<Record<TRole, CandidateColorValue>>;
   readonly measurements: readonly CandidateMeasurement[];
   readonly diagnostics: readonly GenerationDiagnostic[];
@@ -419,6 +438,6 @@ export interface ColorsCandidateEnvelope {
   readonly status: CandidateStatus;
   readonly families: readonly PaletteCandidateFamily[];
   readonly diagnostics: readonly GenerationDiagnostic[];
-  readonly review: Readonly<{ status: "unreviewed" }>;
+  readonly review: CandidateReview;
   readonly provenance: ColorProvenance;
 }

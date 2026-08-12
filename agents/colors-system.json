@@ -6,7 +6,7 @@
   "layer": "colors",
   "kind": "guide",
   "purpose": "Generate and inspect deterministic color candidates without assigning component semantics or hiding changes to brand colors.",
-  "status": "candidate-generation",
+  "status": "candidate-interchange-qualified",
   "rules": [
     {
       "id": "colors-candidate-not-theme",
@@ -47,6 +47,16 @@
       "id": "colors-accepted-scope",
       "level": "must",
       "statement": "Treat accepted as passing only the candidate's declared Colors measurements; Theme mapping and rendered Brick qualification remain separate gates."
+    },
+    {
+      "id": "colors-explicit-review",
+      "level": "must",
+      "statement": "Record an explicit review decision before giving a serialized candidate to Theme and preserve its exact generation evidence."
+    },
+    {
+      "id": "colors-reference-surfaces",
+      "level": "must",
+      "statement": "Supply every intended interface reference surface when a family must work across canvas, raised, overlay, or similar backgrounds."
     },
     {
       "id": "colors-named-reference",

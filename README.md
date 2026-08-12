@@ -3,10 +3,9 @@
 Deterministic, framework-independent color and palette candidate tooling for
 Flowstack UI.
 
-> The package is in its private `0.0.0` qualification stage. It is not
-> published. The interchange has passed a real Theme and complete Brick
-> catalog qualification, but each new candidate still needs its own review and
-> qualification.
+Version 0.1 is the first qualified public boundary. The interchange has passed
+a real Theme and complete Brick catalog qualification, but each new candidate
+still needs its own review and qualification.
 
 ## Boundary
 
@@ -96,6 +95,20 @@ pass. It is not a theme. A person records an explicit review decision, then
 Theme may scaffold selected families from the serialized candidate, revalidate
 the actual Brick pairs, and earn rendered qualification separately.
 
+## Installation and compatibility
+
+Install Colors as build tooling:
+
+```bash
+npm install --save-dev @flowstack-ui/colors
+```
+
+The package requires Node.js 22 or newer. Candidate documents remain explicit
+project data; upgrading Colors does not automatically regenerate an accepted
+Theme. See [installation](docs/installation.md) and
+[compatibility](docs/compatibility.md) for the package, schema, algorithm, and
+runtime boundaries.
+
 ## Development
 
 Requires Node.js 22 or newer.
@@ -113,3 +126,4 @@ The complete current API and diagnostic contract is in
 [`docs/color-foundations.md`](docs/color-foundations.md).
 Palette generation, preservation, rejection, and named references are in
 [`docs/palette-generation.md`](docs/palette-generation.md).
+Release maintainers should also read [`docs/releasing.md`](docs/releasing.md).

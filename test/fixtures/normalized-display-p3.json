@@ -44,7 +44,7 @@
     "$schema": "flowstack.color-provenance.v1",
     "producer": {
       "name": "@flowstack-ui/colors",
-      "version": "0.0.0"
+      "version": "0.1.0"
     },
     "engine": {
       "name": "culori",

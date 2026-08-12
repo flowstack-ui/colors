@@ -16,6 +16,8 @@ component semantics or hiding changes to brand colors.
 - Require an explicit backdrop before comparing translucent colors.
 - Do not infer semantic meaning merely from hue.
 - Keep Colors outside React and the deployed browser runtime.
+- Pin the qualified color engine exactly and treat its recorded version as part
+  of deterministic provenance.
 - Treat `accepted` as passing only the candidate's declared Colors pairs. Theme
   mapping and rendered Brick qualification remain separate per-candidate gates.
 - Record an explicit review decision before giving a serialized candidate to
@@ -27,6 +29,8 @@ component semantics or hiding changes to brand colors.
 
 ## Current status
 
-The color foundations, candidate generator, and serialized Theme interchange
-are implemented and have passed one complete real Brick qualification. New
-candidates remain unreviewed and unqualified until they pass the same workflow.
+Version 0.1 contains the qualified color foundations, candidate generator, and
+serialized Theme interchange. New candidates remain unreviewed and unqualified
+until they pass the same workflow. Package, schema, and algorithm compatibility
+are separate; never regenerate an accepted Theme merely because a dependency
+version changed.

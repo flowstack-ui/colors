@@ -25,3 +25,19 @@ evidence and requalification triggers. The file interchange has additionally
 passed a private real Theme compilation with all 152 Brick contrast results and
 the complete 80-route desktop/mobile light/dark catalog. Those cross-repository
 gates must be repeated when candidate meaning or mapping behavior changes.
+
+## Release gate
+
+```bash
+npm run check:release
+```
+
+The release gate equals the complete repository gate. It verifies the public
+source boundary, release metadata and pinned workflow actions, exact engine
+version, candidate behavior, types, deterministic fixtures, archive contents,
+and a clean JavaScript and TypeScript consumer installed from the archive.
+
+Publishing happens only from a matching immutable tag on `main`. The protected
+workflow rebuilds and repeats this gate, uploads one archive, then publishes
+that exact archive with npm provenance. See
+[`releasing.md`](releasing.md).

@@ -1,8 +1,7 @@
 {
   "name": "@flowstack-ui/colors",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Deterministic color and palette candidate tooling for Flowstack UI.",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
@@ -45,16 +44,20 @@
     "node": ">=22"
   },
   "dependencies": {
-    "culori": "^4.0.2"
+    "culori": "4.0.2"
   },
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "build": "npm run clean && tsc -p tsconfig.build.json",
+    "verify:source": "node scripts/verify-source-contract.mjs",
+    "verify:repository-contract": "node scripts/verify-repository-contract.mjs",
+    "agents:check": "node scripts/verify-agent-knowledge.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "test:types": "tsc -p test/types/tsconfig.json",
     "pack:check": "npm run build && node scripts/verify-package.mjs",
-    "check:repository": "npm run typecheck && npm test && npm run test:types && npm run pack:check",
+    "check:repository": "npm run verify:repository-contract && npm run verify:source && npm run agents:check && npm run typecheck && npm test && npm run test:types && npm run pack:check",
+    "check:release": "npm run check:repository",
     "prepare": "npm run build",
     "prepack": "npm run build"
   },

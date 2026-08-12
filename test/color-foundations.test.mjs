@@ -258,5 +258,5 @@ test("keeps recorded package and engine versions aligned with manifests", async 
   const engineManifest = JSON.parse(await readFile(resolve("node_modules/culori/package.json"), "utf8"));
   assert.equal(COLORS_PACKAGE_VERSION, packageManifest.version);
   assert.equal(COLOR_ENGINE_VERSION, engineManifest.version);
-  assert.equal(packageManifest.dependencies.culori, `^${COLOR_ENGINE_VERSION}`);
+  assert.equal(packageManifest.dependencies.culori, COLOR_ENGINE_VERSION);
 });

@@ -19,6 +19,10 @@ The arrows describe artifact flow, not runtime dependencies. Colors does not
 import Theme or Brick. A deployed application does not require Colors merely
 because its CSS originated from a candidate.
 
+The qualified color engine is pinned exactly. Its version is part of every
+provenance record, so a consumer install cannot silently change math while
+claiming the same engine evidence.
+
 ## Candidate rules
 
 - Inputs and outputs are serializable and deterministic.

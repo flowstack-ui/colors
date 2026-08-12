@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.0 - 2026-08-12
+
 ### Added
 
 - Explicit deterministic candidate review decisions for build-time interchange.
@@ -36,3 +38,10 @@
   Color.js 0.7.1 across parsing, conversion, gamut, contrast, package, and
   deterministic evidence. Batch 7.2 promotes it to the color-science runtime
   dependency because shipped source uses its qualified operations.
+
+### Changed
+
+- Pin the qualified Culori runtime exactly so recorded engine provenance and
+  deterministic output cannot drift during consumer installation.
+- Finalize `flowstack.colors-candidate.v1` after exact Theme and complete Brick
+  catalog qualification.

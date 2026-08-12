@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, resolve } from "node:path";
 
@@ -29,6 +29,7 @@ try {
   const jsonStart = output.lastIndexOf("\n[");
   const packed = JSON.parse(jsonStart >= 0 ? output.slice(jsonStart + 1) : output);
   assert.equal(packed.length, 1);
+  assert.equal(packed[0].version, "0.1.0");
   const archive = resolve(packageDirectory, packed[0].filename);
   const listing = run("tar", ["-tzf", archive], repositoryRoot).trim().split("\n").sort();
 
@@ -42,8 +43,11 @@ try {
     "package/dist/index.js",
     "package/docs/architecture.md",
     "package/docs/color-foundations.md",
+    "package/docs/compatibility.md",
     "package/docs/dependency-qualification.md",
+    "package/docs/installation.md",
     "package/docs/palette-generation.md",
+    "package/docs/releasing.md",
     "package/docs/testing.md",
     "package/package.json",
   ]) {
@@ -107,12 +111,24 @@ void ratio;
   run(process.execPath, [resolve(repositoryRoot, "node_modules/typescript/bin/tsc"), "-p", "tsconfig.json"], consumerDirectory);
 
   const installedPackage = JSON.parse(await readFile(resolve(consumerDirectory, "node_modules/@flowstack-ui/colors/package.json"), "utf8"));
+  assert.equal(installedPackage.version, "0.1.0");
+  assert.notEqual(installedPackage.private, true);
   assert.deepEqual(installedPackage.dependencies, {
-    culori: "^4.0.2",
+    culori: "4.0.2",
   });
   for (const prohibited of ["react", "@flowstack-ui/brick", "@flowstack-ui/theme"]) {
     assert.equal(prohibited in installedPackage.dependencies, false);
   }
+  const installedDist = resolve(consumerDirectory, "node_modules/@flowstack-ui/colors/dist");
+  const installedSources = await Promise.all(
+    (await readdir(installedDist, { recursive: true }))
+      .filter((entry) => entry.endsWith(".js"))
+      .map((entry) => readFile(resolve(installedDist, entry), "utf8")),
+  );
+  assert.doesNotMatch(
+    installedSources.join("\n"),
+    /react|@flowstack-ui\/(?:atom|brick|theme)|document\.|window\.|localStorage/u,
+  );
   console.log(`Verified ${basename(archive)} and its clean consumer.`);
 } finally {
   await rm(temporaryRoot, { recursive: true, force: true });

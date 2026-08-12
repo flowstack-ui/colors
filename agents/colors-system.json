@@ -6,7 +6,7 @@
   "layer": "colors",
   "kind": "guide",
   "purpose": "Generate and inspect deterministic color candidates without assigning component semantics or hiding changes to brand colors.",
-  "status": "candidate-interchange-qualified",
+  "status": "0.1-release",
   "rules": [
     {
       "id": "colors-candidate-not-theme",
@@ -32,6 +32,16 @@
       "id": "colors-no-runtime",
       "level": "must",
       "statement": "Keep Colors out of React and the application browser runtime; exchange serializable artifacts with Theme."
+    },
+    {
+      "id": "colors-engine-version",
+      "level": "must",
+      "statement": "Pin the qualified color engine exactly and treat its recorded version as part of deterministic provenance."
+    },
+    {
+      "id": "colors-upgrade-review",
+      "level": "must",
+      "statement": "Do not regenerate an accepted Theme merely because Colors is upgraded; review candidate diffs and repeat semantic and rendered qualification."
     },
     {
       "id": "colors-gamut-honesty",
@@ -67,6 +77,8 @@
   "related": [
     "docs/architecture.md",
     "docs/color-foundations.md",
+    "docs/compatibility.md",
+    "docs/installation.md",
     "docs/palette-generation.md",
     "docs/dependency-qualification.md",
     "docs/testing.md"

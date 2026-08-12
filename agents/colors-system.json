@@ -1,0 +1,42 @@
+{
+  "schema": "flowstack.agent-guide.v1",
+  "id": "colors-system",
+  "name": "FLOWSTACK Colors system",
+  "package": "@flowstack-ui/colors",
+  "layer": "colors",
+  "kind": "guide",
+  "purpose": "Generate and inspect deterministic color candidates without assigning component semantics or hiding changes to brand colors.",
+  "status": "foundation",
+  "rules": [
+    {
+      "id": "colors-candidate-not-theme",
+      "level": "must",
+      "statement": "Treat Colors output as a candidate until a person approves it and Theme maps and validates its exact values."
+    },
+    {
+      "id": "colors-preserve-seed",
+      "level": "must",
+      "statement": "Preserve exact source colors by default; adapt only under an explicit bounded policy and report the perceptual change."
+    },
+    {
+      "id": "colors-pair-claims",
+      "level": "must",
+      "statement": "Make accessibility claims only for exact measured foreground and background pairs."
+    },
+    {
+      "id": "colors-no-semantic-hue",
+      "level": "must",
+      "statement": "Do not infer accent, danger, warning, success, or information meaning merely from hue."
+    },
+    {
+      "id": "colors-no-runtime",
+      "level": "must",
+      "statement": "Keep Colors out of React and the application browser runtime; exchange serializable artifacts with Theme."
+    }
+  ],
+  "related": [
+    "docs/architecture.md",
+    "docs/dependency-qualification.md",
+    "docs/testing.md"
+  ]
+}

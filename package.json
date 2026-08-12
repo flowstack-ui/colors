@@ -1,0 +1,64 @@
+{
+  "name": "@flowstack-ui/colors",
+  "version": "0.0.0",
+  "description": "Deterministic color and palette candidate tooling for Flowstack UI.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "keywords": [
+    "flowstack-ui",
+    "colors",
+    "palette",
+    "design-tokens",
+    "oklch"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowstack-ui/colors.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flowstack-ui/colors/issues"
+  },
+  "homepage": "https://github.com/flowstack-ui/colors#readme",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./agents/colors-system.json": "./agents/colors-system.json",
+    "./agents/colors-system.md": "./agents/colors-system.md",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "agents",
+    "docs",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:types": "tsc -p test/types/tsconfig.json",
+    "pack:check": "npm run build && node scripts/verify-package.mjs",
+    "check:repository": "npm run typecheck && npm test && npm run test:types && npm run pack:check",
+    "prepare": "npm run build",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/node": "^22.19.7",
+    "culori": "^4.0.2",
+    "typescript": "^5.9.3"
+  }
+}

@@ -313,8 +313,8 @@ function textCandidate(
   const target = candidateColor(
     role,
     oklch(
-      targetLightness ?? (appearance === "light" ? 0.3 : 0.88),
-      Math.min(chroma * 0.4, 0.08),
+      targetLightness ?? (appearance === "light" ? 0.4 : 0.8),
+      Math.min(chroma * 0.75, 0.14),
       hue,
     ),
     seedColor,
@@ -514,6 +514,32 @@ function interfaceAppearance(
     [...references, ...softBackgrounds],
     constraints.textMinimumContrast,
   );
+  const [textLightness, textChroma, textHue] = convertStructuredColor(
+    text.srgb.color,
+    "oklch",
+  ).components;
+  const textStateBackgrounds = [...references, ...softBackgrounds];
+  const textDirection = appearance === "light" ? -1 : 1;
+  const textHover = contrastColorNear(
+    "textHover",
+    appearance,
+    textLightness + textDirection * 0.035,
+    textChroma,
+    textHue,
+    textStateBackgrounds,
+    constraints.textMinimumContrast,
+    seedColor,
+  );
+  const textPressed = contrastColorNear(
+    "textPressed",
+    appearance,
+    textLightness + textDirection * 0.07,
+    textChroma,
+    textHue,
+    textStateBackgrounds,
+    constraints.textMinimumContrast,
+    seedColor,
+  );
   const onSoft = withRole(text, "onSoft");
   const solidBackgrounds = [solid, solidHover, solidPressed];
   const onSolid = bestBinaryForeground("onSolid", solidBackgrounds, seedColor);
@@ -528,6 +554,8 @@ function interfaceAppearance(
     solidHover,
     solidPressed,
     text,
+    textHover,
+    textPressed,
     onSoft,
     onSolid,
   };
@@ -539,6 +567,9 @@ function interfaceAppearance(
   measureDifference(measurements, diagnostics, softHover, softPressed, constraints.stateMinimumDeltaEOK, `${path}.roles.softHover-softPressed`);
   measureDifference(measurements, diagnostics, solid, solidHover, constraints.stateMinimumDeltaEOK, `${path}.roles.solid-solidHover`);
   measureDifference(measurements, diagnostics, solidHover, solidPressed, constraints.stateMinimumDeltaEOK, `${path}.roles.solidHover-solidPressed`);
+  measureOrder(diagnostics, [text, textHover, textPressed], appearance, `${path}.roles.textStates`);
+  measureDifference(measurements, diagnostics, text, textHover, constraints.stateMinimumDeltaEOK, `${path}.roles.text-textHover`);
+  measureDifference(measurements, diagnostics, textHover, textPressed, constraints.stateMinimumDeltaEOK, `${path}.roles.textHover-textPressed`);
   for (const background of softBackgrounds) {
     measureContrast(measurements, diagnostics, onSoft, background, constraints.textMinimumContrast, `${path}.pairs.onSoft-${background.role}`);
   }
@@ -546,7 +577,9 @@ function interfaceAppearance(
     measureContrast(measurements, diagnostics, onSolid, background, constraints.textMinimumContrast, `${path}.pairs.onSolid-${background.role}`);
   }
   for (const reference of references) {
-    measureContrast(measurements, diagnostics, text, reference, constraints.textMinimumContrast, `${path}.pairs.text-${reference.role}`);
+    for (const foreground of [text, textHover, textPressed]) {
+      measureContrast(measurements, diagnostics, foreground, reference, constraints.textMinimumContrast, `${path}.pairs.${foreground.role}-${reference.role}`);
+    }
     measureContrast(measurements, diagnostics, solid, reference, constraints.nonTextMinimumContrast, `${path}.pairs.solid-${reference.role}`);
     measureContrast(measurements, diagnostics, focusRing, reference, constraints.nonTextMinimumContrast, `${path}.pairs.focusRing-${reference.role}`);
     measureContrast(measurements, diagnostics, borderStrong, reference, constraints.nonTextMinimumContrast, `${path}.pairs.borderStrong-${reference.role}`);

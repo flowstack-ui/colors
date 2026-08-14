@@ -365,6 +365,8 @@ export type InterfaceRole =
   | "solidHover"
   | "solidPressed"
   | "text"
+  | "textHover"
+  | "textPressed"
   | "onSoft"
   | "onSolid";
 

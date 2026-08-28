@@ -49,6 +49,14 @@ Do not automatically regenerate an accepted project theme during dependency
 installation. Review the candidate diff, record a new human decision, scaffold
 an ordinary Theme again, and repeat the relevant contract and product gates.
 
+The next compatible 0.1 patch adds `textHover` and `textPressed` to generated
+interface appearances and adjusts the default generated text values. Existing
+reviewed candidate files remain valid inputs because serialized consumers must
+accept additive role evidence. Regenerating the same request intentionally
+produces different exact interface text values under the new producer version,
+so review that candidate diff and repeat Theme qualification before adopting
+it.
+
 ## Moving from qualification builds
 
 `0.1.0` is the first public release. Private `0.0.0` qualification checkouts

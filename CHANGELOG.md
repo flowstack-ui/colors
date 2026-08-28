@@ -2,11 +2,16 @@
 
 ## Unreleased
 
+## 0.1.1 - 2026-08-28
+
 ### Added
 
 - Add independently generated and measured `textHover` and `textPressed`
   interface roles so Theme can map complete resting, hover, and pressed Link
   foreground states from one reviewed candidate.
+- Publish a machine-readable Agent Knowledge manifest and strict zero-failure
+  coverage report for all 76 public API surfaces and six color-operation
+  owners, with deterministic JSON/Markdown parity and packed-consumer checks.
 
 ### Changed
 

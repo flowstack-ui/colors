@@ -15,10 +15,12 @@ const sourcePaths = [
   "src/types.ts",
   "agents/colors-system.json",
   "agents/colors-system.md",
+  "agents/catalog.json",
   "AGENTS.md",
   "CHANGELOG.md",
   "README.md",
   "docs/architecture.md",
+  "docs/agent-knowledge.md",
   "docs/color-foundations.md",
   "docs/compatibility.md",
   "docs/dependency-qualification.md",
@@ -34,7 +36,7 @@ const forbiddenUpstreamPaletteName = new RegExp(
 );
 
 assert.equal(packageJson.name, "@flowstack-ui/colors");
-assert.equal(packageJson.version, "0.1.0");
+assert.equal(packageJson.version, "0.1.1");
 assert.equal(packageJson.type, "module");
 assert.equal(packageJson.sideEffects, false);
 assert.equal(packageJson.repository.url, "git+https://github.com/flowstack-ui/colors.git");

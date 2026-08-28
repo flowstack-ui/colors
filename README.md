@@ -126,4 +126,7 @@ The complete current API and diagnostic contract is in
 [`docs/color-foundations.md`](docs/color-foundations.md).
 Palette generation, preservation, rejection, and named references are in
 [`docs/palette-generation.md`](docs/palette-generation.md).
+Agent and tool discovery starts with
+[`docs/agent-knowledge.md`](docs/agent-knowledge.md), including the manifest,
+coverage report, and six operation-owner routes.
 Release maintainers should also read [`docs/releasing.md`](docs/releasing.md).

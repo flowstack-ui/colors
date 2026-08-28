@@ -1,6 +1,6 @@
 {
   "name": "@flowstack-ui/colors",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deterministic color and palette candidate tooling for Flowstack UI.",
   "type": "module",
   "license": "MIT",
@@ -32,6 +32,10 @@
     },
     "./agents/colors-system.json": "./agents/colors-system.json",
     "./agents/colors-system.md": "./agents/colors-system.md",
+    "./agents/manifest.json": "./dist/agents/manifest.json",
+    "./agents/coverage.json": "./dist/agents/coverage.json",
+    "./agents/*.json": "./dist/agents/*.json",
+    "./agents/*.md": "./dist/agents/*.md",
     "./package.json": "./package.json"
   },
   "files": [
@@ -48,9 +52,10 @@
   },
   "scripts": {
     "clean": "node scripts/clean.mjs",
-    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "build": "npm run clean && tsc -p tsconfig.build.json && npm run agents:build",
     "verify:source": "node scripts/verify-source-contract.mjs",
     "verify:repository-contract": "node scripts/verify-repository-contract.mjs",
+    "agents:build": "node scripts/build-agent-knowledge.mjs",
     "agents:check": "node scripts/verify-agent-knowledge.mjs",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",

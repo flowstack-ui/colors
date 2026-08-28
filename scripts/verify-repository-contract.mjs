@@ -24,6 +24,8 @@ for (const path of [
   ".github/workflows/publish.yml",
   "agents/colors-system.json",
   "agents/colors-system.md",
+  "agents/catalog.json",
+  "docs/agent-knowledge.md",
   "docs/architecture.md",
   "docs/color-foundations.md",
   "docs/compatibility.md",
@@ -33,6 +35,7 @@ for (const path of [
   "docs/releasing.md",
   "docs/testing.md",
   "scripts/verify-agent-knowledge.mjs",
+  "scripts/build-agent-knowledge.mjs",
   "scripts/verify-package.mjs",
   "scripts/verify-repository-contract.mjs",
   "scripts/verify-source-contract.mjs",
@@ -65,13 +68,23 @@ try {
 }
 
 if (packageJson.name !== "@flowstack-ui/colors") errors.push("unexpected package name");
-if (packageJson.version !== "0.1.0") errors.push("release version must be 0.1.0");
+if (packageJson.version !== "0.1.1") errors.push("release version must be 0.1.1");
 if (packageJson.private === true) errors.push("release package must not be private");
 if (packageJson.engines?.node !== ">=22") errors.push("Node 22 declaration is required");
 if (packageJson.dependencies?.culori !== "4.0.2") errors.push("qualified Culori runtime must be pinned to 4.0.2");
 if (Object.keys(packageJson.dependencies ?? {}).length !== 1) errors.push("Culori must be the only runtime dependency");
 if (packageJson.scripts?.["check:release"] !== "npm run check:repository") {
   errors.push("release gate must equal the repository gate");
+}
+for (const exportPath of [
+  "./agents/colors-system.json",
+  "./agents/colors-system.md",
+  "./agents/manifest.json",
+  "./agents/coverage.json",
+  "./agents/*.json",
+  "./agents/*.md",
+]) {
+  if (!(exportPath in packageJson.exports)) errors.push(`missing Agent Knowledge export ${exportPath}`);
 }
 
 if (errors.length > 0) {

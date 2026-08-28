@@ -13,7 +13,9 @@ The repository gate covers TypeScript, serializable boundary tests, CSS and
 Design Tokens inputs, conversion without hidden mapping, difficult gamut
 cases, exact contrast vectors, alpha rejection, difference methods,
 provenance, deterministic fixtures, qualified Culori behavior, package
-contents, and a clean packed consumer. Candidate tests add multiple profiles,
+contents, Agent Knowledge catalog and report parity, and a clean packed
+consumer. The Agent Knowledge gate rejects missing, stale, duplicate, or extra
+classifications and generated artifacts. Candidate tests add multiple profiles,
 independent appearances, exact and bounded preservation, state ordering,
 foreground pairs, rejection diagnostics, configurable decorative output,
 multi-seed collisions, 31 named raw references, difficult-color gates, and a
@@ -35,7 +37,9 @@ npm run check:release
 The release gate equals the complete repository gate. It verifies the public
 source boundary, release metadata and pinned workflow actions, exact engine
 version, candidate behavior, types, deterministic fixtures, archive contents,
-and a clean JavaScript and TypeScript consumer installed from the archive.
+and a clean JavaScript and TypeScript consumer installed from the archive. The
+installed-copy check resolves the manifest and every guide artifact, traverses
+all 76 classified API surfaces, and exercises all six operation families.
 
 Publishing happens only from a matching immutable tag on `main`. The protected
 workflow rebuilds and repeats this gate, uploads one archive, then publishes

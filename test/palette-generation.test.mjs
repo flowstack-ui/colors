@@ -326,6 +326,6 @@ test("reproduces the candidate algorithm golden bytes", () => {
   ]))), bytes);
   assert.equal(
     createHash("sha256").update(bytes).digest("hex"),
-    "61dbb15d281cf849ead260c6053825df9ed0b9c8958481fe205d552173c51dc4",
+    "78190a07cb7c960badd2c3b0dc6d7869396302d5c7fa79726c1a81c0421d712f",
   );
 });

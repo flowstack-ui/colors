@@ -75,6 +75,10 @@ test("generates light and dark relationships independently", () => {
   assert.ok(dark.solidHover.desired.components[0] > anchorLightness);
   assert.ok(light.softHover.desired.components[0] < light.soft.desired.components[0]);
   assert.ok(dark.softHover.desired.components[0] > dark.soft.desired.components[0]);
+  assert.ok(light.textHover.desired.components[0] < light.text.desired.components[0]);
+  assert.ok(light.textPressed.desired.components[0] < light.textHover.desired.components[0]);
+  assert.ok(dark.textHover.desired.components[0] > dark.text.desired.components[0]);
+  assert.ok(dark.textPressed.desired.components[0] > dark.textHover.desired.components[0]);
 });
 
 test("qualifies interface roles against every supplied reference surface", () => {
@@ -97,7 +101,7 @@ test("qualifies interface roles against every supplied reference surface", () =>
       references[appearance],
     );
     for (const background of result.referenceBackgrounds) {
-      for (const foreground of ["text", "solid", "focusRing", "borderStrong"]) {
+      for (const foreground of ["text", "textHover", "textPressed", "solid", "focusRing", "borderStrong"]) {
         const measurement = result.measurements.find((entry) =>
           entry.kind === "contrast"
           && entry.foreground === foreground
@@ -322,6 +326,6 @@ test("reproduces the candidate algorithm golden bytes", () => {
   ]))), bytes);
   assert.equal(
     createHash("sha256").update(bytes).digest("hex"),
-    "4ab718c5667cb3883ac9e7e1aea9f86ce07bd134fd88ed33d921a3decdb6d6a7",
+    "61dbb15d281cf849ead260c6053825df9ed0b9c8958481fe205d552173c51dc4",
   );
 });

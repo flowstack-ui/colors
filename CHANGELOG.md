@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+
+- Add independently generated and measured `textHover` and `textPressed`
+  interface roles so Theme can map complete resting, hover, and pressed Link
+  foreground states from one reviewed candidate.
+
+### Changed
+
+- Increase the default interface text chroma and use less extreme lightness
+  targets while preserving the existing contrast, state-order, gamut, and
+  deterministic-output gates.
+
 ## 0.1.0 - 2026-08-12
 
 ### Added

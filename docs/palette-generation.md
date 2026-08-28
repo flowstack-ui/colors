@@ -47,24 +47,28 @@ measurements, and reasons. Rejection is data, not an exception.
 
 An interface family contains `soft`, `softHover`, `softPressed`, `border`,
 `borderStrong`, `focusRing`, `solid`, `solidHover`, `solidPressed`, `text`,
-`onSoft`, and `onSolid` roles for each appearance. The exact seed is the
-`solid` anchor.
+`textHover`, `textPressed`, `onSoft`, and `onSolid` roles for each appearance.
+The exact seed is the `solid` anchor. The three text roles form a separately
+generated resting, hover, and pressed foreground sequence; they are candidate
+values for Theme mapping, not interaction behavior owned by Colors.
 
 Colors measures:
 
 - state lightness direction and adjacent deltaEOK distinction;
 - `onSoft` against every soft state;
 - one `onSolid` foreground against all solid states;
-- text against the appearance reference background; and
+- resting, hover, and pressed text state order and adjacent deltaEOK
+  distinction;
+- every text state against every appearance reference background; and
 - solid, strong border, and focus ring against that background.
 
 Reference backgrounds default to `#ffffff` for light and `#111111` for dark.
 An author may provide one or more opaque backgrounds per appearance with
-`options.referenceBackgrounds`. Colors then finds `text`, `borderStrong`, and
-`focusRing` values that pass every supplied surface and records every exact
-measurement. This lets a Theme candidate account for canvas, raised, overlay,
-and similar real surfaces before mapping. Theme still remeasures the actual
-Brick pairs after mapping.
+`options.referenceBackgrounds`. Colors then finds `text`, `textHover`,
+`textPressed`, `borderStrong`, and `focusRing` values that pass every supplied
+surface and records every exact measurement. This lets a Theme candidate
+account for canvas, raised, overlay, and similar real surfaces before mapping.
+Theme still remeasures the actual Brick pairs after mapping.
 
 ### Neutral
 
